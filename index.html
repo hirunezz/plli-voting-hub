@@ -544,7 +544,6 @@
           "#taskList input[type='checkbox']"
         );
 
-        if (taskCards.length === 0) return;
 
         const taskCompleted = [...taskCards].filter(
           checkbox => checkbox.checked
@@ -587,6 +586,18 @@
 
         updateProgress();
 
+        document.addEventListener('plli:daily-refresh', () => {
+  const current = loadChecks();
+
+  document.querySelectorAll('.voting-checkbox')
+    .forEach(checkbox => {
+      checkbox.checked = Boolean(
+        current[checkbox.dataset.voteId]
+      );
+    });
+
+  updateProgress();
+});
         /*
           The existing app.js may rerender the
           task list. Recalculate after changes.
