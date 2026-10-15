@@ -1,15 +1,399 @@
-const SEED=[{id:'demo-mubeat',title:'Mubeat：檢查票券累積',platform:'Mubeat',type:'collect',url:'https://mubeat.tv/',description:'示範任務：檢查 Heart Beats 及官方活動資訊。',xauth:'none',reset:'daily',status:'active'},{id:'demo-idol',title:'IDOL CHAMP：每日累積',platform:'IDOL CHAMP',type:'collect',url:'https://www.idolchamp.com/',description:'示範任務：查看 Chamsim 餘額與活動。',xauth:'none',reset:'daily',status:'active'},{id:'demo-mnet',title:'Mnet Plus：確認投票',platform:'Mnet Plus',type:'vote',url:'https://www.mnetplus.world/',description:'示範任務：查看 M COUNTDOWN 當期投票公告；不代表目前開放。',xauth:'unknown',reset:'daily',status:'active'},{id:'demo-x',title:'X：確認認證活動',platform:'X',type:'social',url:'https://x.com/',description:'示範任務：查詢官方是否要求發文、轉推或截圖認證。',xauth:'unknown',reset:'daily',status:'active'}];
-const SHOWS=[['SHOW CHAMPION','IDOL CHAMP'],['M COUNTDOWN','Mnet Plus'],['Music Bank','官方公布的音源、銷量、放送與投票資料'],['Show! 音樂中心','Mubeat 等（依當期公告）'],['人氣歌謠','LiNC / HIGHER 等（依當期公告）'],['THE SHOW','請先確認當期播出與投票方式']];
-const TYPES={collect:'累積票券',vote:'投票',social:'X 認證',stream:'音源 / MV'};const XAUTH={none:'不需要',post:'需 X 發文',repost:'需轉推',screenshot:'需截圖',unknown:'待確認'};
-const key='plli-hub-v1';const read=(k,def)=>{try{let v=JSON.parse(localStorage.getItem(key+':'+k));return v===null?def:v}catch{return def}};const save=(k,v)=>localStorage.setItem(key+':'+k,JSON.stringify(v));let tasks=read('tasks',SEED),done=read('done',{}),balances=read('balances',{});
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const kstDay=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const doneKey=t=>t.id+':'+(t.reset==='daily'?kstDay():'once');const validUrl=url=>{try{const u=new URL(url);return ['https:','http:'].includes(u.protocol)?u.href:'#'}catch{return '#'}};
-function renderTasks(){const all=tasks.filter(t=>t.status==='active'),filtered=all.filter(t=>document.querySelector('#filter').value==='all'||t.type===document.querySelector('#filter').value);document.querySelector('#taskList').innerHTML=filtered.length?filtered.map(t=>`<article class="card ${done[doneKey(t)]?'completed':''}"><div class="task-top"><div><div class="task-meta">${esc(t.platform)} · ${esc(TYPES[t.type]||t.type)}</div><h3>${esc(t.title)}</h3></div><span class="pill">${esc(XAUTH[t.xauth]||'待確認')}</span></div><p>${esc(t.description)}</p><div class="task-actions"><a class="primary" href="${esc(validUrl(t.url))}" target="_blank" rel="noopener noreferrer">↗ 開啟平台</a><label class="check"><input type="checkbox" data-done="${esc(t.id)}" ${done[doneKey(t)]?'checked':''}>已完成</label></div><div class="muted-small" style="margin-top:12px">${t.reset==='daily'?'每日 KST 重置':'一次性任務'} · ${t.id.startsWith('demo-')?'示範資料':'本機自訂任務'}</div></article>`).join(''):'<p class="muted">沒有符合條件的任務。</p>';const total=all.length,count=all.filter(t=>done[doneKey(t)]).length;document.querySelector('#progressCount').textContent=count+' / '+total;document.querySelector('#progressBar').style.width=(total?count/total*100:0)+'%'}
-function renderTickets(){document.querySelector('#ticketList').innerHTML=[['Mubeat','Heart Beats'],['IDOL CHAMP','Chamsim'],['HIGHER','票券（依當期活動）'],['LiNC','Fan Points（依當期公告）']].map(([app,currency])=>`<div class="card ticket-row"><div><h3>${esc(app)}</h3><div class="muted-small">${esc(currency)}</div></div><label class="muted-small">我的餘額 <input type="number" min="0" max="999999999" step="1" data-balance="${esc(app)}" value="${Number(balances[app]||0)}"></label></div>`).join('')}
-function renderShows(){document.querySelector('#showList').innerHTML=SHOWS.map(([name,detail])=>`<article class="card"><h3>${esc(name)}</h3><p>${esc(detail)}</p><span class="pill">待官方查證</span></article>`).join('')}
-function renderAdmin(){document.querySelector('#adminList').innerHTML=tasks.map(t=>`<div class="card ticket-row"><div><b>${esc(t.title)}</b><div class="muted-small">${esc(t.platform)} · ${t.status==='active'?'啟用':'草稿'}</div></div><button class="outline" data-remove="${esc(t.id)}">刪除</button></div>`).join('')}
-function render(){renderTasks();renderTickets();renderShows();renderAdmin()}
-document.addEventListener('change',e=>{if(e.target.matches('[data-done]')){const t=tasks.find(t=>t.id===e.target.dataset.done);if(!t)return;done[doneKey(t)]=e.target.checked;save('done',done);renderTasks()}if(e.target.matches('[data-balance]')){const n=Math.floor(Number(e.target.value));balances[e.target.dataset.balance]=Number.isFinite(n)?Math.max(0,n):0;save('balances',balances)}if(e.target.id==='filter')renderTasks()});
-document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==b.dataset.tab)}));
-document.querySelector('#taskForm').addEventListener('submit',e=>{e.preventDefault();const val=id=>document.getElementById(id).value.trim();if(validUrl(val('url'))==='#'){alert('請輸入有效的 http(s) 官方連結');return}tasks.push({id:'local-'+Date.now(),title:val('title'),platform:val('platform'),type:val('type'),url:val('url'),description:val('description'),xauth:val('xauth'),reset:val('reset'),status:val('status')});save('tasks',tasks);e.target.reset();render();alert('已新增到此瀏覽器。尚未同步給其他使用者。')});document.querySelector('#adminList').addEventListener('click',e=>{const id=e.target.dataset.remove;if(!id||!confirm('確定刪除此本機任務？'))return;tasks=tasks.filter(t=>t.id!==id);save('tasks',tasks);render()});document.querySelector('#restore').addEventListener('click',()=>{if(!confirm('恢復所有示範任務？本機自訂任務將被清除。'))return;tasks=structuredClone(SEED);save('tasks',tasks);render()});
-function clock(){document.querySelector('#clock').textContent='KST '+new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())}clock();setInterval(()=>{clock();renderTasks()},60000);render();
-let installPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.querySelector('#install').hidden=false});document.querySelector('#install').addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;document.querySelector('#install').hidden=true});if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+const SEED = [
+  {
+    id: 'demo-mubeat',
+    title: 'Mubeat：檢查票券累積',
+    platform: 'Mubeat',
+    type: 'collect',
+    url: 'https://mubeat.tv/',
+    description: '示範任務：檢查 Heart Beats 及官方活動資訊。',
+    xauth: 'none',
+    reset: 'daily',
+    status: 'active'
+  },
+  {
+    id: 'demo-idol',
+    title: 'IDOL CHAMP：每日累積',
+    platform: 'IDOL CHAMP',
+    type: 'collect',
+    url: 'https://apps.apple.com/tw/app/idolchamp/id1185735018',
+    description: '示範任務：查看 Chamsim 餘額與活動。iPhone 可透過 App Store 開啟已安裝的 APP。',
+    xauth: 'none',
+    reset: 'daily',
+    status: 'active'
+  },
+  {
+    id: 'demo-mnet',
+    title: 'Mnet Plus：確認投票',
+    platform: 'Mnet Plus',
+    type: 'vote',
+    url: 'https://www.mnetplus.world/',
+    description: '示範任務：查看 M COUNTDOWN 當期投票公告；不代表目前開放。',
+    xauth: 'unknown',
+    reset: 'daily',
+    status: 'active'
+  },
+  {
+    id: 'demo-x',
+    title: 'X：確認認證活動',
+    platform: 'X',
+    type: 'social',
+    url: 'https://x.com/',
+    description: '示範任務：查詢官方是否要求發文、轉推或截圖認證。',
+    xauth: 'unknown',
+    reset: 'daily',
+    status: 'active'
+  }
+];
+
+const SHOWS = [
+  ['SHOW CHAMPION', 'IDOL CHAMP'],
+  ['M COUNTDOWN', 'Mnet Plus'],
+  ['Music Bank', '官方公布的音源、銷量、放送與投票資料'],
+  ['Show! 音樂中心', 'Mubeat 等（依當期公告）'],
+  ['人氣歌謠', 'LiNC / HIGHER 等（依當期公告）'],
+  ['THE SHOW', '請先確認當期播出與投票方式']
+];
+
+const TYPES = {
+  collect: '累積票券',
+  vote: '投票',
+  social: 'X 認證',
+  stream: '音源 / MV'
+};
+
+const XAUTH = {
+  none: '不需要',
+  post: '需 X 發文',
+  repost: '需轉推',
+  screenshot: '需截圖',
+  unknown: '待確認'
+};
+
+const key = 'plli-hub-v1';
+
+const read = (k, def) => {
+  try {
+    let v = JSON.parse(localStorage.getItem(key + ':' + k));
+    return v === null ? def : v;
+  } catch {
+    return def;
+  }
+};
+
+const save = (k, v) =>
+  localStorage.setItem(key + ':' + k, JSON.stringify(v));
+
+let tasks = read('tasks', SEED);
+let done = read('done', {});
+let balances = read('balances', {});
+
+// 更新舊版 IDOL CHAMP 示範任務，保留其他資料
+let idolUpdated = false;
+
+tasks = tasks.map(t => {
+  if (t.id === 'demo-idol') {
+    idolUpdated = true;
+    return {
+      ...t,
+      url: 'https://apps.apple.com/tw/app/idolchamp/id1185735018',
+      description: '示範任務：查看 Chamsim 餘額與活動。iPhone 可透過 App Store 開啟已安裝的 APP。'
+    };
+  }
+  return t;
+});
+
+if (idolUpdated) {
+  save('tasks', tasks);
+}
+
+const esc = s =>
+  String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
+
+const kstDay = () =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+
+const doneKey = t =>
+  t.id + ':' + (t.reset === 'daily' ? kstDay() : 'once');
+
+const validUrl = url => {
+  try {
+    const u = new URL(url);
+    return ['https:', 'http:'].includes(u.protocol)
+      ? u.href
+      : '#';
+  } catch {
+    return '#';
+  }
+};
+
+function renderTasks() {
+  const all = tasks.filter(t => t.status === 'active');
+
+  const filtered = all.filter(t =>
+    document.querySelector('#filter').value === 'all' ||
+    t.type === document.querySelector('#filter').value
+  );
+
+  document.querySelector('#taskList').innerHTML =
+    filtered.length
+      ? filtered.map(t => `
+        <article class="card ${done[doneKey(t)] ? 'completed' : ''}">
+          <div class="task-top">
+            <div>
+              <div class="task-meta">
+                ${esc(t.platform)} · ${esc(TYPES[t.type] || t.type)}
+              </div>
+              <h3>${esc(t.title)}</h3>
+            </div>
+            <span class="pill">
+              ${esc(XAUTH[t.xauth] || '待確認')}
+            </span>
+          </div>
+
+          <p>${esc(t.description)}</p>
+
+          <div class="task-actions">
+            <a
+              class="primary"
+              href="${esc(validUrl(t.url))}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ↗ 開啟平台
+            </a>
+
+            <label class="check">
+              <input
+                type="checkbox"
+                data-done="${esc(t.id)}"
+                ${done[doneKey(t)] ? 'checked' : ''}
+              >
+              已完成
+            </label>
+          </div>
+
+          <div class="muted-small" style="margin-top:12px">
+            ${t.reset === 'daily' ? '每日 KST 重置' : '一次性任務'}
+            ·
+            ${t.id.startsWith('demo-') ? '示範資料' : '本機自訂任務'}
+          </div>
+        </article>
+      `).join('')
+      : '<p class="muted">沒有符合條件的任務。</p>';
+
+  const total = all.length;
+  const count = all.filter(t => done[doneKey(t)]).length;
+
+  document.querySelector('#progressCount').textContent =
+    count + ' / ' + total;
+
+  document.querySelector('#progressBar').style.width =
+    (total ? count / total * 100 : 0) + '%';
+}
+
+function renderTickets() {
+  document.querySelector('#ticketList').innerHTML = [
+    ['Mubeat', 'Heart Beats'],
+    ['IDOL CHAMP', 'Chamsim'],
+    ['HIGHER', '票券（依當期活動）'],
+    ['LiNC', 'Fan Points（依當期公告）']
+  ].map(([app, currency]) => `
+    <div class="card ticket-row">
+      <div>
+        <h3>${esc(app)}</h3>
+        <div class="muted-small">${esc(currency)}</div>
+      </div>
+
+      <label class="muted-small">
+        我的餘額
+        <input
+          type="number"
+          min="0"
+          max="999999999"
+          step="1"
+          data-balance="${esc(app)}"
+          value="${Number(balances[app] || 0)}"
+        >
+      </label>
+    </div>
+  `).join('');
+}
+
+function renderShows() {
+  document.querySelector('#showList').innerHTML =
+    SHOWS.map(([name, detail]) => `
+      <article class="card">
+        <h3>${esc(name)}</h3>
+        <p>${esc(detail)}</p>
+        <span class="pill">待官方查證</span>
+      </article>
+    `).join('');
+}
+
+function renderAdmin() {
+  document.querySelector('#adminList').innerHTML =
+    tasks.map(t => `
+      <div class="card ticket-row">
+        <div>
+          <b>${esc(t.title)}</b>
+          <div class="muted-small">
+            ${esc(t.platform)} ·
+            ${t.status === 'active' ? '啟用' : '草稿'}
+          </div>
+        </div>
+
+        <button class="outline" data-remove="${esc(t.id)}">
+          刪除
+        </button>
+      </div>
+    `).join('');
+}
+
+function render() {
+  renderTasks();
+  renderTickets();
+  renderShows();
+  renderAdmin();
+}
+
+document.addEventListener('change', e => {
+  if (e.target.matches('[data-done]')) {
+    const t = tasks.find(t => t.id === e.target.dataset.done);
+    if (!t) return;
+
+    done[doneKey(t)] = e.target.checked;
+    save('done', done);
+    renderTasks();
+  }
+
+  if (e.target.matches('[data-balance]')) {
+    const n = Math.floor(Number(e.target.value));
+
+    balances[e.target.dataset.balance] =
+      Number.isFinite(n) ? Math.max(0, n) : 0;
+
+    save('balances', balances);
+  }
+
+  if (e.target.id === 'filter') {
+    renderTasks();
+  }
+});
+
+document.querySelectorAll('[data-tab]').forEach(b =>
+  b.addEventListener('click', () => {
+    document.querySelectorAll('[data-tab]').forEach(x =>
+      x.classList.toggle('active', x === b)
+    );
+
+    document.querySelectorAll('.panel').forEach(p => {
+      p.hidden = p.id !== b.dataset.tab;
+    });
+  })
+);
+
+document.querySelector('#taskForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const val = id =>
+    document.getElementById(id).value.trim();
+
+  if (validUrl(val('url')) === '#') {
+    alert('請輸入有效的 http(s) 官方連結');
+    return;
+  }
+
+  tasks.push({
+    id: 'local-' + Date.now(),
+    title: val('title'),
+    platform: val('platform'),
+    type: val('type'),
+    url: val('url'),
+    description: val('description'),
+    xauth: val('xauth'),
+    reset: val('reset'),
+    status: val('status')
+  });
+
+  save('tasks', tasks);
+  e.target.reset();
+  render();
+
+  alert('已新增到此瀏覽器。尚未同步給其他使用者。');
+});
+
+document.querySelector('#adminList').addEventListener('click', e => {
+  const id = e.target.dataset.remove;
+
+  if (!id || !confirm('確定刪除此本機任務？')) return;
+
+  tasks = tasks.filter(t => t.id !== id);
+  save('tasks', tasks);
+  render();
+});
+
+document.querySelector('#restore').addEventListener('click', () => {
+  if (!confirm('恢復所有示範任務？本機自訂任務將被清除。')) {
+    return;
+  }
+
+  tasks = structuredClone(SEED);
+  save('tasks', tasks);
+  render();
+});
+
+function clock() {
+  document.querySelector('#clock').textContent =
+    'KST ' +
+    new Intl.DateTimeFormat('zh-TW', {
+      timeZone: 'Asia/Seoul',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(new Date());
+}
+
+clock();
+
+setInterval(() => {
+  clock();
+  renderTasks();
+}, 60000);
+
+render();
+
+let installPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installPrompt = e;
+  document.querySelector('#install').hidden = false;
+});
+
+document.querySelector('#install').addEventListener('click', async () => {
+  if (!installPrompt) return;
+
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+
+  installPrompt = null;
+  document.querySelector('#install').hidden = true;
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () =>
+    navigator.serviceWorker.register('./sw.js').catch(() => {})
+  );
+}
