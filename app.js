@@ -111,6 +111,109 @@
     if (event.key === KEY) { checked = load(); render(); }
     if (event.key === TICKET_KEY) { ticketChecked = loadTickets(); renderTickets(); }
   });
+  // Independent memo page: persistent notes, never reset at KST midnight.
+  const MEMO_KEY = 'plli-hyperdrive-memos-v1';
+  const memoForm = document.getElementById('memoForm');
+  const memoList = document.getElementById('memoList');
+  const memoEmpty = document.getElementById('memoEmpty');
+  const memoCount = document.getElementById('memoCount');
+  const memoError = document.getElementById('memoError');
+  let memos = [];
+
+  function readMemos() {
+    try {
+      const data = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
+      return Array.isArray(data) ? data.filter(item =>
+        item && typeof item.id === 'string' && typeof item.title === 'string' &&
+        typeof item.url === 'string' && /^https?:\/\//i.test(item.url)
+      ) : [];
+    } catch { return []; }
+  }
+  function saveMemos() {
+    try { localStorage.setItem(MEMO_KEY, JSON.stringify(memos)); }
+    catch { showMemoError('無法儲存：請確認瀏覽器允許儲存網站資料。'); }
+  }
+  function showMemoError(message) {
+    memoError.textContent = message;
+    memoError.hidden = !message;
+  }
+  function renderMemos() {
+    memoList.replaceChildren();
+    memoCount.textContent = String(memos.length);
+    memoEmpty.hidden = memos.length > 0;
+    memos.forEach((item, index) => {
+      const card = document.createElement('article');
+      card.className = 'memo-card';
+      const top = document.createElement('div');
+      top.className = 'memo-card-top';
+      const number = document.createElement('span');
+      number.className = 'memo-index';
+      number.textContent = `LINK ${String(index + 1).padStart(2, '0')}`;
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'memo-delete';
+      remove.textContent = '刪除 ×';
+      remove.setAttribute('aria-label', `刪除 ${item.title}`);
+      remove.addEventListener('click', () => {
+        if (!confirm(`確定刪除「${item.title}」？`)) return;
+        memos = memos.filter(memo => memo.id !== item.id);
+        saveMemos();
+        renderMemos();
+      });
+      top.append(number, remove);
+      const title = document.createElement('h3');
+      title.textContent = item.title;
+      const url = document.createElement('p');
+      url.className = 'memo-url';
+      url.textContent = item.url;
+      const link = document.createElement('a');
+      link.className = 'memo-open';
+      link.href = item.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = '開啟連結 ↗';
+      card.append(top, title, url, link);
+      memoList.appendChild(card);
+    });
+  }
+  memos = readMemos();
+  renderMemos();
+  memoForm.addEventListener('submit', event => {
+    event.preventDefault();
+    showMemoError('');
+    const title = document.getElementById('memoTitleInput').value.trim();
+    const rawUrl = document.getElementById('memoUrlInput').value.trim();
+    let url;
+    try {
+      url = new URL(rawUrl);
+      if (!['https:', 'http:'].includes(url.protocol)) throw new Error('invalid protocol');
+    } catch {
+      showMemoError('請輸入有效的 https:// 或 http:// 網址。');
+      return;
+    }
+    if (!title) { showMemoError('請填寫標題。'); return; }
+    memos.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, title, url: url.href });
+    saveMemos();
+    renderMemos();
+    memoForm.reset();
+    document.getElementById('memoTitleInput').focus();
+  });
+  document.querySelectorAll('[data-page]').forEach(button => {
+    button.addEventListener('click', () => {
+      const showMemo = button.dataset.page === 'memo';
+      document.getElementById('missionsPage').hidden = showMemo;
+      document.getElementById('memoPage').hidden = !showMemo;
+      document.querySelectorAll('[data-page]').forEach(tab => {
+        const active = tab === button;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-selected', String(active));
+      });
+    });
+  });
+  window.addEventListener('storage', event => {
+    if (event.key === MEMO_KEY) { memos = readMemos(); renderMemos(); }
+  });
+
   checkDay();
   setInterval(checkDay, 1000);
 })();

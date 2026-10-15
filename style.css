@@ -16,3 +16,25 @@
 .ticket-item:focus-within{outline:2px solid var(--blue-light);outline-offset:2px}
 @media(max-width:1050px){.ticket-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.ticket-section-header{margin-top:40px}.ticket-grid{grid-template-columns:1fr;gap:9px}.ticket-item{min-height:66px}}
+
+
+/* PAGE NAVIGATION + PERSONAL MEMO */
+.page-tabs{display:flex;gap:10px;margin:-8px 0 28px;padding:8px;border:1px solid var(--border);background:#0e151d}
+.page-tab{flex:1;min-width:0;padding:13px 15px;border:1px solid transparent;background:transparent;color:var(--muted);font-size:13px;font-weight:900;letter-spacing:.04em;cursor:pointer;text-align:center}
+.page-tab:hover{color:var(--white);background:#182431}
+.page-tab.active{background:var(--blue);color:#05111d;border-color:var(--blue)}
+.page-tab:focus-visible,.memo-add:focus-visible,.memo-delete:focus-visible,.memo-field input:focus-visible{outline:2px solid var(--blue-light);outline-offset:3px}
+.page-content[hidden],.memo-error[hidden],.memo-empty[hidden]{display:none!important}
+.memo-header{margin:12px 0 16px}.memo-intro{color:var(--muted);font-size:13px;line-height:1.8;margin:0 0 20px}
+.memo-form{display:grid;grid-template-columns:1fr 1.35fr auto;align-items:end;gap:13px;background:linear-gradient(120deg,#121d28,#0d141c);border:1px solid var(--border);border-top:3px solid var(--blue);padding:22px;margin-bottom:20px}
+.memo-field{display:flex;flex-direction:column;gap:9px;min-width:0}.memo-field label{font-size:10px;font-weight:900;letter-spacing:.13em;color:var(--blue-light)}
+.memo-field input{width:100%;min-width:0;background:#090e14;color:var(--white);border:1px solid #3a4858;padding:13px 12px;border-radius:0;outline:none}
+.memo-field input::placeholder{color:#748496}.memo-add{background:var(--blue);color:#06121c;border:0;padding:14px 18px;font-weight:900;cursor:pointer;white-space:nowrap}.memo-add:hover{background:var(--blue-light)}
+.memo-error{grid-column:1/-1;color:#ffb2b2;font-size:12px;margin:0}.memo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.memo-card{min-width:0;padding:20px;background:linear-gradient(145deg,#162330,#0d151e);border:1px solid var(--border);border-left:3px solid var(--blue);display:flex;flex-direction:column;gap:15px}
+.memo-card-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.memo-index{font-size:11px;color:var(--blue);font-weight:900;letter-spacing:.12em}.memo-delete{border:1px solid #465565;background:#18222c;color:#e4edf5;font-size:12px;padding:7px 10px;cursor:pointer}.memo-delete:hover{background:#38252a;border-color:#ba6371}
+.memo-card h3{margin:0;font-size:20px;font-weight:900;overflow-wrap:anywhere}.memo-url{font-size:11px;color:var(--muted);overflow-wrap:anywhere;margin:0}
+.memo-open{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;margin-top:auto;background:var(--blue);color:#06121c;text-decoration:none;font-size:13px;font-weight:900}.memo-open:hover{background:var(--blue-light)}
+.memo-empty{border:1px dashed #425264;color:var(--muted);padding:32px 20px;text-align:center;font-size:13px}.memo-footnote{color:var(--muted);font-size:11px;margin-top:18px;line-height:1.8}
+@media(max-width:900px){.memo-form{grid-template-columns:1fr 1fr}.memo-add{grid-column:1/-1}.memo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.page-tabs{gap:5px;padding:5px;margin-bottom:20px}.page-tab{font-size:11px;padding:12px 8px}.memo-form{grid-template-columns:1fr;padding:17px}.memo-add{grid-column:auto}.memo-grid{grid-template-columns:1fr}.memo-card{padding:18px}}

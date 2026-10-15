@@ -22,7 +22,13 @@
       <div class="header-tag">PLLI <span>RACING TEAM</span></div>
     </header>
 
+    <nav class="page-tabs" aria-label="網站分頁">
+      <button type="button" class="page-tab active" data-page="missions" aria-selected="true">01 / 投票與存票</button>
+      <button type="button" class="page-tab" data-page="memo" aria-selected="false">02 / 我的備忘錄</button>
+    </nav>
+
     <main>
+      <div id="missionsPage" class="page-content">
       <section class="dashboard" aria-labelledby="dash-title">
         <div class="dashboard-info">
           <div class="section-kicker"><span class="line-number">00</span> CONTROL PANEL</div>
@@ -126,6 +132,33 @@
           <label class="ticket-item"><input type="checkbox" data-ticket-id="tin"><span class="ticket-num">07</span><span class="ticket-name">TIN</span><span class="ticket-state">待完成</span></label>
           <label class="ticket-item"><input type="checkbox" data-ticket-id="higher"><span class="ticket-num">08</span><span class="ticket-name">HIGHER</span><span class="ticket-state">待完成</span></label>
         </div>
+      </section>
+      </div>
+
+      <section id="memoPage" class="page-content memo-page" hidden aria-labelledby="memoTitle">
+        <div class="section-header memo-header">
+          <div>
+            <div class="section-kicker"><span class="line-number">03</span> DRIVER NOTES / PERSONAL LINKS</div>
+            <h2 id="memoTitle">MY <span>MEMO</span></h2>
+          </div>
+          <div class="section-meta"><span id="memoCount">0</span> SAVED</div>
+        </div>
+        <p class="memo-intro">自行新增標題與連結，建立專屬快捷入口。備忘錄不會每日重置，也不會影響投票儀表板。</p>
+        <form id="memoForm" class="memo-form">
+          <div class="memo-field">
+            <label for="memoTitleInput">標題 / TITLE</label>
+            <input id="memoTitleInput" name="title" maxlength="100" required placeholder="例如：PLAVE 官方公告" autocomplete="off">
+          </div>
+          <div class="memo-field">
+            <label for="memoUrlInput">連結 / LINK</label>
+            <input id="memoUrlInput" name="url" type="url" inputmode="url" maxlength="2000" required placeholder="https://example.com">
+          </div>
+          <button class="memo-add" type="submit">＋ 新增區塊</button>
+          <p id="memoError" class="memo-error" role="alert" hidden></p>
+        </form>
+        <div id="memoList" class="memo-grid" aria-live="polite"></div>
+        <p id="memoEmpty" class="memo-empty">尚未建立備忘錄，使用上方表單新增第一個連結。</p>
+        <p class="memo-footnote">資料僅保存在目前瀏覽器。清除網站資料或更換裝置可能導致備忘錄遺失。</p>
       </section>
     </main>
     <footer><span>PLAVE HYPERDRIVE <b>///</b> PLLI RACING TEAM</span><span>FAN-MADE · NOT AFFILIATED WITH PLAVE / VLAST</span></footer>
