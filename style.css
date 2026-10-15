@@ -713,3 +713,40 @@ footer::before {
     animation-duration: .01ms !important;
   }
 }
+
+
+/* HYPERDRIVE — Responsive Website Title */
+
+.brand {
+  min-width: 0;
+  flex: 1;
+}
+
+.brand > div:last-child {
+  min-width: 0;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: clamp(15px, 2vw, 20px);
+  line-height: 1.3;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.header-right {
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .brand h1 {
+    font-size: 15px;
+  }
+
+  header {
+    gap: 8px;
+  }
+}
