@@ -1,656 +1,134 @@
-
 <!doctype html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover"
-  >
-
-  <meta name="theme-color" content="#0d0d0f">
-
-  <meta
-    name="description"
-    content="PLAVE HYPERDRIVE Comeback Guide for PLLI：每日投票任務、票券管理與音樂節目攻略。"
-  >
-
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-
-  <title>PLAVE HYPERDRIVE Comeback Guide for PLLI</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b10">
+  <meta name="description" content="PLAVE HYPERDRIVE — Comeback Guide for PLLI">
+  <title>PLAVE HYPERDRIVE | COMEBACK GUIDE FOR PLLI</title>
   <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
-
 <body>
-  <div id="app">
-
-    <!-- HEADER -->
-
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true">⚑</div>
-
-        <div>
-          <h1>PLAVE HYPERDRIVE Comeback Guide for PLLI</h1>
-        </div>
+  <div class="track-line" aria-hidden="true"></div>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="mark" aria-hidden="true">P<span>///</span></div>
+      <div class="heading">
+        <div class="eyebrow">2026 COMEBACK OPERATIONS <span class="live-dot"></span> RACE CONTROL</div>
+        <h1>PLAVE <em>HYPERDRIVE</em></h1>
+        <p class="subtitle">COMEBACK GUIDE FOR PLLI</p>
       </div>
-
-      <div class="header-right">
-        <span id="clock"></span>
-
-        <button id="install" hidden>
-          安裝到主畫面
-        </button>
-      </div>
+      <div class="header-tag">PLLI <span>RACING TEAM</span></div>
     </header>
 
     <main>
-
-      <!-- HERO / RACE DASHBOARD -->
-
-      <section class="hero">
-
-        <div>
-          <div class="notice">
-            目前為可操作的示範版。
-            示範任務不代表今日官方投票已開放；
-            請以官方公告為準。
+      <section class="dashboard" aria-labelledby="dash-title">
+        <div class="dashboard-info">
+          <div class="section-kicker"><span class="line-number">00</span> CONTROL PANEL</div>
+          <h2 id="dash-title">MISSION <span>STATUS</span></h2>
+          <p>今日投票完成進度 · 僅統計 RACE 1–3</p>
+          <div class="dashboard-details">
+            <div><strong id="completedCount">0</strong><small>COMPLETED</small></div>
+            <span class="dashboard-divider">/</span>
+            <div><strong id="totalCount">4</strong><small>VOTING MISSIONS</small></div>
           </div>
+          <div class="reset-note"><span class="blue-square"></span> 每日韓國時間 00:00 自動重置</div>
+          <div class="kst-clock" id="kstClock">KST --:--:--</div>
         </div>
-
-        <div class="progress-card">
-          <div
-            class="progress-number"
-            id="progressCount"
-          >
-            0 / 0
-          </div>
-
-          <span>今日任務完成</span>
-
-          <div class="progress-bar">
-            <div id="progressBar"></div>
-          </div>
+        <div class="gauge-panel">
+          <svg class="gauge" viewBox="0 0 360 222" role="img" aria-label="今日投票完成進度儀表">
+            <defs>
+              <linearGradient id="gaugeGradient" x1="0" x2="1"><stop offset="0" stop-color="#0c67c4"/><stop offset="1" stop-color="#58c7ff"/></linearGradient>
+            </defs>
+            <path class="gauge-track" d="M 38 183 A 142 142 0 0 1 322 183" pathLength="100"/>
+            <path class="gauge-fill" id="gaugeFill" d="M 38 183 A 142 142 0 0 1 322 183" pathLength="100"/>
+            <g id="gaugeTicks"></g>
+            <g class="needle" id="needle" transform="rotate(-90 180 183)"><path d="M 174 184 L 180 58 L 186 184 Z" fill="#6bd3ff"/><circle cx="180" cy="183" r="13" fill="#f8fbff"/><circle cx="180" cy="183" r="6" fill="#0a111a"/></g>
+            <text x="180" y="132" class="gauge-value" id="gaugeValue">0%</text>
+            <text x="180" y="153" class="gauge-label">VOTING COMPLETE</text>
+            <text x="26" y="210" class="gauge-end">START</text>
+            <text x="334" y="210" text-anchor="end" class="gauge-end">FINISH</text>
+          </svg>
         </div>
-
       </section>
 
-      <!-- NAVIGATION -->
+      <div class="section-header">
+        <div>
+          <div class="section-kicker"><span class="line-number">01</span> START YOUR ENGINES</div>
+          <h2>VOTING <span>MISSIONS</span></h2>
+        </div>
+        <div class="section-meta">03 RACES <span>·</span> 04 MISSIONS</div>
+      </div>
 
-      <nav class="tabs" aria-label="主要頁面">
-
-        <button data-tab="today" class="active">
-          今日任務
-        </button>
-
-        <button data-tab="tickets">
-          票券
-        </button>
-
-        <button data-tab="shows">
-          音放
-        </button>
-
-        <button data-tab="guide">
-          教學
-        </button>
-
-        <button data-tab="admin">
-          管理
-        </button>
-
-      </nav>
-
-      <!-- TODAY'S MISSIONS -->
-
-      <section id="today" class="panel">
-
-        <!-- VOTING MISSIONS -->
-
-        <section class="voting-section">
-
-          <div class="voting-heading">
-            <div>
-              <span class="voting-label">
-                RACE CONTROL / 01
-              </span>
-
-              <h2>VOTING MISSIONS</h2>
-
-              <p>
-                投票開放時間請以官方公告為準。
-                開啟 APP 不代表投票完成。
-              </p>
+      <section class="races" aria-label="投票任務">
+        <article class="race-card">
+          <div class="race-top"><span class="race-index">RACE <b>01</b></span><span class="race-type">MUSIC SHOW</span></div>
+          <div class="race-name"><h3>人氣歌謠</h3><span>INKIGAYO</span></div>
+          <div class="race-missions">
+            <div class="mission">
+              <div class="mission-heading"><span class="mission-dot"></span><strong>事前投票</strong><small>PRE-VOTE</small></div>
+              <a class="app-link" href="https://apps.apple.com/tw/app/linc-%EB%A7%81%ED%81%AC/id6467824343" target="_blank" rel="noopener noreferrer">開啟 LiNC <span aria-hidden="true">↗</span></a>
+              <label class="mission-check"><input type="checkbox" data-vote-id="inkigayo-pre"><span>已完成事前投票</span></label>
+            </div>
+            <div class="mission">
+              <div class="mission-heading"><span class="mission-dot"></span><strong>實時投票</strong><small>LIVE VOTE</small></div>
+              <a class="app-link" href="https://apps.apple.com/tw/app/higher-%ED%95%98%EC%9D%B4%EC%96%B4/id1672001935" target="_blank" rel="noopener noreferrer">開啟 HIGHER <span aria-hidden="true">↗</span></a>
+              <label class="mission-check"><input type="checkbox" data-vote-id="inkigayo-live"><span>已完成實時投票</span></label>
             </div>
           </div>
+        </article>
 
-          <div class="voting-grid">
-
-            <!-- INKIGAYO -->
-
-            <article class="voting-card">
-              <span class="voting-number">01</span>
-
-              <div class="voting-content">
-                <h3>人氣歌謠</h3>
-                <p>INKIGAYO</p>
-
-                <div class="voting-links">
-                  <a
-                    href="https://apps.apple.com/tw/app/linc-%EB%A7%81%ED%81%AC/id6467824343"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    事前投票 · LiNC ↗
-                  </a>
-
-                  <label class="voting-check">
-                    <input
-                      type="checkbox"
-                      class="voting-checkbox"
-                      data-vote-id="inkigayo-pre"
-                    >
-                    事前投票完成
-                  </label>
-
-                  <a
-                    href="https://apps.apple.com/tw/app/higher-%ED%95%98%EC%9D%B4%EC%96%B4/id1672001935"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    實時投票 · HIGHER ↗
-                  </a>
-
-                  <label class="voting-check">
-                    <input
-                      type="checkbox"
-                      class="voting-checkbox"
-                      data-vote-id="inkigayo-live"
-                    >
-                    實時投票完成
-                  </label>
-                </div>
-              </div>
-            </article>
-
-            <!-- MAMA -->
-
-            <article class="voting-card">
-              <span class="voting-number">02</span>
-
-              <div class="voting-content">
-                <h3>MAMA</h3>
-                <p>MAMA AWARDS</p>
-
-                <div class="voting-links">
-                  <a
-                    href="https://mnetplus.world/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    開啟 Mnet Plus ↗
-                  </a>
-
-                  <label class="voting-check">
-                    <input
-                      type="checkbox"
-                      class="voting-checkbox"
-                      data-vote-id="mama"
-                    >
-                    投票完成
-                  </label>
-                </div>
-              </div>
-            </article>
-
-          
-<!-- MMA -->
-
-<article class="voting-card">
-  <span class="voting-number">03</span>
-
-  <div class="voting-content">
-    <h3>MMA</h3>
-    <p>MELON MUSIC AWARDS</p>
-
-    <div class="voting-links">
-      <a href="melonapp://">
-        開啟 Melon APP ↗
-      </a>
-
-      <label class="voting-check">
-        <input
-          type="checkbox"
-          class="voting-checkbox"
-          data-vote-id="mma"
-        >
-        投票完成
-      </label>
-    </div>
-  </div>
-</article>
-
+        <article class="race-card">
+          <div class="race-top"><span class="race-index">RACE <b>02</b></span><span class="race-type">AWARDS</span></div>
+          <div class="race-name"><h3>MAMA</h3><span>MAMA AWARDS</span></div>
+          <div class="race-missions">
+            <div class="mission">
+              <div class="mission-heading"><span class="mission-dot"></span><strong>官方投票</strong><small>OFFICIAL VOTE</small></div>
+              <a class="app-link" href="https://mnetplus.onelink.me/TRa8/1xrmljvt" target="_blank" rel="noopener noreferrer">開啟 Mnet Plus <span aria-hidden="true">↗</span></a>
+              <label class="mission-check"><input type="checkbox" data-vote-id="mama"><span>已完成投票</span></label>
+            </div>
           </div>
-        </section>
+        </article>
 
-
-        <!-- DAILY MISSIONS -->
-
-        <div class="section-heading">
-          <div>
-            <h2>每日任務</h2>
-
-            <p>
-              完成後手動勾選；
-              每日任務依韓國時間重置。
-            </p>
+        <article class="race-card">
+          <div class="race-top"><span class="race-index">RACE <b>03</b></span><span class="race-type">AWARDS</span></div>
+          <div class="race-name"><h3>MMA</h3><span>MELON MUSIC AWARDS</span></div>
+          <div class="race-missions">
+            <div class="mission">
+              <div class="mission-heading"><span class="mission-dot"></span><strong>官方投票</strong><small>OFFICIAL VOTE</small></div>
+              <a class="app-link" href="melonapp://">開啟 Melon APP <span aria-hidden="true">↗</span></a>
+              <label class="mission-check"><input type="checkbox" data-vote-id="mma"><span>已完成投票</span></label>
+              <a class="fallback-link" href="https://m.melon.com/" target="_blank" rel="noopener noreferrer">Melon 網頁備用入口 ↗</a>
+            </div>
           </div>
+        </article>
+      </section>
+      <p class="disclaimer">投票時間及資格請以官方公告為準。開啟 APP 不代表已完成投票，請在實際完成後手動勾選。勾選資料僅儲存在目前裝置。</p>
 
-          <select id="filter" aria-label="篩選任務">
-            <option value="all">全部任務</option>
-            <option value="collect">累積票券</option>
-            <option value="vote">投票</option>
-            <option value="social">X 認證</option>
-            <option value="stream">音源 / MV</option>
-          </select>
+      <!-- SECTION 02 / TICKET SAVING CHECKLIST -->
+      <div class="section-header ticket-section-header">
+        <div>
+          <div class="section-kicker"><span class="line-number">02</span> PIT STOP / TICKET BANK</div>
+          <h2>TICKET <span>CHECKLIST</span></h2>
         </div>
-
-        <div id="taskList" class="task-grid"></div>
-
-      </section>
-
-      <!-- TICKETS -->
-
-      <section id="tickets" class="panel" hidden>
-
-        <div class="section-heading">
-          <div>
-            <h2>我的票券</h2>
-
-            <p>
-              票券餘額只儲存在目前裝置，
-              不會傳送到其他 PLLI。
-            </p>
-          </div>
+        <div class="section-meta"><span id="ticketDoneCount">0</span> / 08 COMPLETED</div>
+      </div>
+      <section class="ticket-section" aria-label="每日存票清單">
+        <p class="ticket-intro">每日存票完成後勾選，韓國時間 00:00 自動重置。此區進度獨立於上方投票儀表板。</p>
+        <div class="ticket-grid">
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="bigc"><span class="ticket-num">01</span><span class="ticket-name">BIGC</span><span class="ticket-state">待完成</span></label>
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="idolchamp"><span class="ticket-num">02</span><span class="ticket-name">IDOLCHAMP</span><span class="ticket-state">待完成</span></label>
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="mnetplus"><span class="ticket-num">03</span><span class="ticket-name">Mnet Plus</span><span class="ticket-state">待完成</span></label>
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="muniverse"><span class="ticket-num">04</span><span class="ticket-name">Muniverse</span><span class="ticket-state">待完成</span></label>
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="mubeat"><span class="ticket-num">05</span><span class="ticket-name">Mubeat</span><span class="ticket-state">待完成</span></label>
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="linc"><span class="ticket-num">06</span><span class="ticket-name">LiNC</span><span class="ticket-state">待完成</span></label>
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="tin"><span class="ticket-num">07</span><span class="ticket-name">TIN</span><span class="ticket-state">待完成</span></label>
+          <label class="ticket-item"><input type="checkbox" data-ticket-id="higher"><span class="ticket-num">08</span><span class="ticket-name">HIGHER</span><span class="ticket-state">待完成</span></label>
         </div>
-
-        <div id="ticketList" class="task-grid"></div>
-
       </section>
-
-      <!-- MUSIC SHOWS -->
-
-      <section id="shows" class="panel" hidden>
-
-        <h2>音樂節目攻略</h2>
-
-        <p class="muted">
-          以下為平台索引示範。
-          2026 當期計分比例、開放狀態及投票管道，
-          需依節目公告查核。
-        </p>
-
-        <div id="showList" class="task-grid"></div>
-
-      </section>
-
-      <!-- GUIDE -->
-
-      <section id="guide" class="panel" hidden>
-
-        <h2>安裝與使用教學</h2>
-
-        <div class="card">
-
-          <h3>iPhone</h3>
-
-          <p>
-            以 Safari 開啟網站 →
-            分享 → 加入主畫面。
-            安裝後可從桌面直接進入。
-          </p>
-
-          <h3>Android</h3>
-
-          <p>
-            以 Chrome 開啟網站 →
-            選單 → 安裝應用程式／加入主畫面。
-          </p>
-
-          <h3>投票 APP 快速開啟</h3>
-
-          <p>
-            任務中的「開啟平台」會使用各平台設定的連結。
-            部分連結可直接開啟已安裝的 APP，
-            其他連結可能開啟網站或 App Store。
-            開啟平台不代表投票完成。
-          </p>
-
-          <h3>進度儲存</h3>
-
-          <p>
-            此版本使用瀏覽器本機儲存。
-            清除網站資料或更換裝置，
-            可能遺失紀錄。
-            目前尚未提供跨裝置同步。
-          </p>
-
-        </div>
-
-      </section>
-
-      <!-- LOCAL ADMIN -->
-
-      <section id="admin" class="panel" hidden>
-
-        <h2>管理員 · 本機編輯示範</h2>
-
-        <p class="notice">
-          此版管理功能僅修改目前瀏覽器內的資料，
-          尚未連線雲端。
-          不能將本機修改同步給其他 PLLI，
-          也不具備真正的管理員身分驗證。
-        </p>
-
-        <form id="taskForm" class="card form">
-
-          <label>
-            任務名稱
-            <input
-              id="title"
-              required
-              maxlength="100"
-              placeholder="例如：每日累積 Heart Beats"
-            >
-          </label>
-
-          <label>
-            平台名稱
-            <input
-              id="platform"
-              required
-              maxlength="60"
-              placeholder="例如：Mubeat"
-            >
-          </label>
-
-          <label>
-            類型
-            <select id="type">
-              <option value="collect">累積票券</option>
-              <option value="vote">投票</option>
-              <option value="social">X 認證</option>
-              <option value="stream">音源 / MV</option>
-            </select>
-          </label>
-
-          <label>
-            官方平台網址（https://）
-            <input
-              id="url"
-              type="url"
-              required
-              placeholder="https://example.com"
-            >
-          </label>
-
-          <label>
-            任務說明
-            <textarea
-              id="description"
-              rows="3"
-              maxlength="400"
-            ></textarea>
-          </label>
-
-          <label>
-            X 認證
-            <select id="xauth">
-              <option value="none">不需要</option>
-              <option value="post">需 X 發文</option>
-              <option value="repost">需轉推</option>
-              <option value="screenshot">需截圖</option>
-              <option value="unknown">待確認</option>
-            </select>
-          </label>
-
-          <label>
-            重置週期
-            <select id="reset">
-              <option value="daily">每日（KST）</option>
-              <option value="once">活動期間一次</option>
-            </select>
-          </label>
-
-          <label>
-            狀態
-            <select id="status">
-              <option value="draft">
-                草稿（不顯示於任務列表）
-              </option>
-              <option value="active">
-                啟用（本機示範）
-              </option>
-            </select>
-          </label>
-
-          <button class="primary" type="submit">
-            新增本機任務
-          </button>
-
-        </form>
-
-        <h3>已建立的本機任務</h3>
-
-        <div id="adminList"></div>
-
-        <button id="restore" class="outline">
-          恢復示範資料
-        </button>
-
-      </section>
-
     </main>
-
-    <!-- FOOTER -->
-
-    <footer>
-      Made for PLLI · 非 PLAVE / VLAST 官方網站 ·
-      任務資訊請以官方公告為準
-    </footer>
-
+    <footer><span>PLAVE HYPERDRIVE <b>///</b> PLLI RACING TEAM</span><span>FAN-MADE · NOT AFFILIATED WITH PLAVE / VLAST</span></footer>
   </div>
-
-  <!-- ORIGINAL APP LOGIC -->
-  <script src="app.js" defer></script>
-
-  <!-- VOTING TASK LOGIC -->
-  <script>
-    (() => {
-      const KEY = "plli-voting-checks-v1";
-      const VOTE_IDS = [
-        "inkigayo-pre",
-        "inkigayo-live",
-        "mama",
-        "mma"
-      ];
-
-      const kstDate = () =>
-        new Intl.DateTimeFormat("en-CA", {
-          timeZone: "Asia/Seoul",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit"
-        }).format(new Date());
-
-      function loadChecks() {
-        try {
-          const stored = JSON.parse(
-            localStorage.getItem(KEY) || "{}"
-          );
-
-          return stored.date === kstDate()
-            ? (stored.checks || {})
-            : {};
-        } catch {
-          return {};
-        }
-      }
-
-      function saveChecks(checks) {
-        localStorage.setItem(
-          KEY,
-          JSON.stringify({
-            date: kstDate(),
-            checks
-          })
-        );
-      }
-
-      function getProgress() {
-        const checks = loadChecks();
-
-        const completed = VOTE_IDS.filter(
-          id => checks[id]
-        ).length;
-
-        return {
-          completed,
-          total: VOTE_IDS.length
-        };
-      }
-
-      function updateProgress() {
-        const originalCount =
-          document.getElementById("progressCount");
-
-        const originalBar =
-          document.getElementById("progressBar");
-
-        if (!originalCount || !originalBar) return;
-
-        const vote = getProgress();
-
-        /*
-          The existing app.js owns the original daily
-          mission progress. Keep its value separately
-          to avoid double-counting voting tasks.
-        */
-
-        const taskCards = document.querySelectorAll(
-          "#taskList input[type='checkbox']"
-        );
-
-
-        const taskCompleted = [...taskCards].filter(
-          checkbox => checkbox.checked
-        ).length;
-
-        const taskTotal = taskCards.length;
-
-        const completed =
-          taskCompleted + vote.completed;
-
-        const total =
-          taskTotal + vote.total;
-
-        originalCount.textContent =
-          `${completed} / ${total}`;
-
-        originalBar.style.width =
-          `${total ? completed / total * 100 : 0}%`;
-      }
-
-      function initialize() {
-        const checks = loadChecks();
-
-        document.querySelectorAll(
-          ".voting-checkbox"
-        ).forEach(checkbox => {
-          const id = checkbox.dataset.voteId;
-
-          checkbox.checked = Boolean(checks[id]);
-
-          checkbox.addEventListener("change", () => {
-            const updated = loadChecks();
-
-            updated[id] = checkbox.checked;
-
-            saveChecks(updated);
-            updateProgress();
-          });
-        });
-
-        updateProgress();
-
-        document.addEventListener('plli:daily-refresh', () => {
-  const current = loadChecks();
-
-  document.querySelectorAll('.voting-checkbox')
-    .forEach(checkbox => {
-      checkbox.checked = Boolean(
-        current[checkbox.dataset.voteId]
-      );
-    });
-
-  updateProgress();
-});
-        /*
-          The existing app.js may rerender the
-          task list. Recalculate after changes.
-        */
-        const taskList =
-          document.getElementById("taskList");
-
-        if (taskList) {
-          const observer = new MutationObserver(() => {
-            updateProgress();
-          });
-
-          observer.observe(taskList, {
-            childList: true,
-            subtree: true
-          });
-        }
-
-        document.addEventListener(
-          "change",
-          event => {
-            if (
-              event.target.closest("#taskList")
-            ) {
-              setTimeout(updateProgress, 0);
-            }
-          }
-        );
-
-        setInterval(() => {
-          const current = loadChecks();
-
-          document.querySelectorAll(
-            ".voting-checkbox"
-          ).forEach(checkbox => {
-            checkbox.checked = Boolean(
-              current[checkbox.dataset.voteId]
-            );
-          });
-
-          updateProgress();
-        }, 60000);
-      }
-
-      if (document.readyState === "loading") {
-        document.addEventListener(
-          "DOMContentLoaded",
-          initialize
-        );
-      } else {
-        initialize();
-      }
-    })();
-  </script>
 </body>
 </html>
