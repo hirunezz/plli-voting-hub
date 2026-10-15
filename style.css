@@ -1,358 +1,192 @@
-
-/* HYPERDRIVE — BASE STYLE */
-
-:root {
-  --black: #0d0d0f;
-  --dark: #171719;
-  --panel: #1e1e21;
-  --gray: #8d8d93;
-  --line: #3a3a40;
-  --white: #f5f5f5;
-  --red: #e53935;
-  --red-dark: #b71c1c;
+  height: 4px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #fff 0 9px,
+      #161618 9px 18px
+    );
 }
 
-* {
-  box-sizing: border-box;
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 850;
 }
 
-html {
-  background: #0d0d0f;
+.card p {
+  color: #bdbdc3;
 }
 
-body {
-  margin: 0;
-  background: #0d0d0f;
-  color: #f5f5f5;
-  font-family: Arial, "Noto Sans TC", sans-serif;
-  line-height: 1.6;
-}
-
-#app {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-header {
+.task-top {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
-  min-width: 0;
 }
 
-.brand h1 {
-  margin: 0;
-  color: #fff;
-  font-size: clamp(16px, 2vw, 22px);
-  font-weight: 900;
-  font-style: italic;
-  line-height: 1.3;
-}
-
-.logo {
-  color: #e53935;
-  font-size: 32px;
-}
-
-.hero,
-.panel,
-.card,
-.task-card,
-.progress-card {
-  color: #f5f5f5;
-}
-
-.hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding: 22px;
-  background: #1e1e21;
-  border-left: 5px solid #e53935;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.notice {
-  color: #d0d0d5;
-}
-
-.progress-card {
-  min-width: 190px;
-}
-
-.progress-number {
-  color: #fff;
-  font-size: 28px;
-  font-weight: 900;
-}
-
-.progress-bar {
-  height: 8px;
-  margin-top: 10px;
-  background: #44444a;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-#progressBar {
-  height: 100%;
-  background: #e53935;
-}
-
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 24px;
-  padding: 10px;
-  background: #171719;
-  border-radius: 8px;
-}
-
-button,
-select,
-input,
-textarea {
-  font: inherit;
-}
-
-.tabs button {
-  padding: 10px 16px;
-  color: #fff;
-  background: #29292d;
-  border: 1px solid #45454a;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.tabs button.active {
-  background: #e53935;
-  border-color: #e53935;
-}
-
-.panel {
-  padding: 20px 0;
-}
-
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.section-heading h2 {
-  margin: 0;
-}
-
-.section-heading p,
-.muted {
-  color: #a8a8af;
-}
-
-.task-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.task-grid > * {
-  padding: 18px;
-  background: #1e1e21;
-  border: 1px solid #45454a;
-  border-radius: 8px;
-}
-
-.card {
-  padding: 20px;
-  background: #1e1e21;
-  border: 1px solid #45454a;
-  border-radius: 8px;
-}
-
-.primary {
-  background: #e53935;
-  color: #fff;
-  border: 0;
-  border-radius: 5px;
-  padding: 10px 16px;
-  cursor: pointer;
-}
-
-footer {
-  margin-top: 40px;
-  padding: 24px 0;
-  color: #a8a8af;
-  text-align: center;
-  border-top: 1px solid #45454a;
-}
-
-@media (max-width: 700px) {
-  #app {
-    padding: 12px;
-  }
-
-  header,
-  .hero {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .section-heading {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-  .section-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .tabs {
-    position: sticky;
-    top: 0;
-    background: rgba(13,13,15,.96);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 5;
-  }
-
-  .tabs button {
-    font-size: 12px;
-    padding: 11px 13px;
-  }
-
-  .task-actions {
-    flex-wrap: wrap;
-  }
-
-  .task-actions .primary {
-    min-width: 150px;
-  }
-
-  #clock {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-    animation-duration: .01ms !important;
-  }
-}
-
-/* =========================================
-   HYPERDRIVE — LONG SITE TITLE
-   ========================================= */
-.brand { min-width: 0; flex: 1; }
-.brand > div:last-child { min-width: 0; }
-.brand h1 {
-  margin: 0;
-  font-size: clamp(15px, 2vw, 20px);
-  line-height: 1.3;
-  font-weight: 900;
-  font-style: italic;
-  letter-spacing: -.025em;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-.header-right { flex-shrink: 0; }
-
-/* =========================================
-   VOTING MISSIONS — INKIGAYO / MAMA / MMA
-   ========================================= */
-.voting-section { margin: 8px 0 30px; }
-.voting-heading {
-  border-left: 4px solid var(--red);
-  padding-left: 14px;
-  margin-bottom: 16px;
-}
-.voting-label {
-  color: #ff706d;
+.pill {
   font-size: 11px;
-  font-weight: 900;
-  letter-spacing: .14em;
-}
-.voting-heading h2 {
-  margin: 5px 0;
-  font-size: 25px;
-  font-weight: 900;
-  font-style: italic;
-  text-transform: uppercase;
-}
-.voting-heading p {
-  margin: 4px 0;
-  color: #a8a8af;
-  font-size: 13px;
-}
-.voting-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-.voting-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 18px 14px;
-  background: #1c1c1f;
-  border: 1px solid #45454a;
-  border-top: 3px solid var(--red);
-  border-radius: 7px;
-}
-.voting-card > div { min-width: 0; }
-.voting-number {
-  color: #ff706d;
-  font-size: 23px;
-  font-weight: 950;
-  font-style: italic;
-  font-variant-numeric: tabular-nums;
-}
-.voting-card h3 {
-  color: var(--white);
-  margin: 0;
-  font-size: 16px;
-}
-.voting-card p {
-  color: #a8a8af;
-  margin: 3px 0 0;
-  font-size: 10px;
-  letter-spacing: .04em;
-}
-.voting-status {
-  margin-left: auto;
-  color: #c9c9ce;
+  font-weight: 750;
+  padding: 4px 9px;
   background: #303034;
   border: 1px solid #505057;
   border-radius: 3px;
-  padding: 4px 7px;
-  font-size: 10px;
+  color: #e0e0e4;
   white-space: nowrap;
 }
-@media (max-width: 900px) {
-  .voting-grid { grid-template-columns: 1fr; }
+
+.task-meta {
+  color: #ff706d;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
 }
-@media (max-width: 700px) {
-  .brand h1 { font-size: 15px; }
-  header { gap: 8px; }
-  .voting-card { padding: 16px 14px; }
+
+/* TASK ACTIONS */
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 17px;
 }
+
+.primary {
+  display: inline-block;
+  border: 1px solid #f04b47;
+  background: var(--red);
+  color: #fff;
+  font-weight: 850;
+  padding: 12px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center;
+  transition:
+    background .2s,
+    transform .2s;
+}
+
+.primary:hover {
+  background: #f14b47;
+  color: #fff;
+}
+
+.task-actions .primary {
+  flex: 1;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.check input {
+  accent-color: var(--red);
+  width: 19px;
+  height: 19px;
+}
+
+/* COMPLETED MISSION */
+
+.completed {
+  border-color: #76767c;
+  background: #252528;
+}
+
+.completed::after {
+  content: "FINISHED";
+  position: absolute;
+  right: 14px;
+  bottom: 4px;
+  font-size: 9px;
+  letter-spacing: .15em;
+  font-weight: 900;
+  color: #85858c;
+  pointer-events: none;
+}
+
+.muted-small {
+  color: #9d9da5;
+  font-size: 12px;
+}
+
+/* FUEL / TICKET RESOURCES */
+
+.ticket-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.ticket-row input {
+  width: 110px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* RACE CONTROL / ADMIN */
+
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  max-width: 750px;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #d3d3d7;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.form label:has(textarea),
+.form .primary {
+  grid-column: 1 / -1;
+}
+
+input:not([type=checkbox]),
+select,
+textarea {
+  background: #121214;
+  border: 1px solid #55555b;
+  color: #fff;
+  border-radius: 5px;
+  padding: 11px;
+  min-width: 0;
+}
+
+input:not([type=checkbox]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--red);
+}
+
+select {
+  max-width: 220px;
+}
+
+.form select {
+  max-width: none;
+}
+
+#adminList .card {
+  margin: 10px 0;
+}
+
+#install {
+  padding: 9px 12px;
+}
+
+/* FOOTER / FINISH LINE */
+
+footer {
+  position: relative;
