@@ -223,19 +223,11 @@
   rel="noopener noreferrer"
 >
   開啟 Melon APP ↗
+
+<a href="melonapp://">
+  開啟 Melon APP ↗
 </a>
 
-<script>
-  document.getElementById("melonAppLink")
-    .addEventListener("click", function (event) {
-      if (/Android/i.test(navigator.userAgent)) {
-        event.preventDefault();
-
-        window.location.href =
-          "intent://#Intent;package=com.iloen.melon;scheme=melon;S.browser_fallback_url=https%3A%2F%2Fm.melon.com%2F;end";
-      }
-    });
-</script>
 
                   <label class="voting-check">
                     <input
