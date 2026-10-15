@@ -397,3 +397,43 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {})
   );
 }
+
+
+/* 韓國時間 00:00 自動更新每日任務 */
+
+function refreshDailyTasks() {
+  renderTasks();
+
+  // 通知投票區重新檢查當天的勾選狀態
+  document.dispatchEvent(
+    new Event('plli:daily-refresh')
+  );
+}
+
+function scheduleKstMidnightReset() {
+  const now = Date.now();
+
+  // 韓國時間固定為 UTC+9
+  const kstOffset = 9 * 60 * 60 * 1000;
+  const dayMs = 24 * 60 * 60 * 1000;
+
+  const nextMidnight =
+    Math.floor((now + kstOffset) / dayMs) * dayMs
+    + dayMs - kstOffset;
+
+  setTimeout(() => {
+    refreshDailyTasks();
+    scheduleKstMidnightReset();
+  }, nextMidnight - now + 100);
+}
+
+// 開啟網頁或從背景返回時，檢查是否已跨日
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    refreshDailyTasks();
+  }
+});
+
+window.addEventListener('pageshow', refreshDailyTasks);
+
+scheduleKstMidnightReset();
