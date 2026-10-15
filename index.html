@@ -121,7 +121,8 @@
               <h2>VOTING MISSIONS</h2>
 
               <p>
-                投票活動請以官方公告為準。
+                投票開放時間請以官方公告為準。
+                開啟 APP 不代表投票完成。
               </p>
             </div>
           </div>
@@ -133,14 +134,46 @@
             <article class="voting-card">
               <span class="voting-number">01</span>
 
-              <div>
+              <div class="voting-content">
                 <h3>人氣歌謠</h3>
                 <p>INKIGAYO</p>
-              </div>
 
-              <span class="voting-status">
-                待公告
-              </span>
+                <div class="voting-links">
+                  <a
+                    href="https://apps.apple.com/tw/app/linc-%EB%A7%81%ED%81%AC/id6467824343"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    事前投票 · LiNC ↗
+                  </a>
+
+                  <label class="voting-check">
+                    <input
+                      type="checkbox"
+                      class="voting-checkbox"
+                      data-vote-id="inkigayo-pre"
+                    >
+                    事前投票完成
+                  </label>
+
+                  <a
+                    href="https://apps.apple.com/tw/app/higher-%ED%95%98%EC%9D%B4%EC%96%B4/id1672001935"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    實時投票 · HIGHER ↗
+                  </a>
+
+                  <label class="voting-check">
+                    <input
+                      type="checkbox"
+                      class="voting-checkbox"
+                      data-vote-id="inkigayo-live"
+                    >
+                    實時投票完成
+                  </label>
+                </div>
+              </div>
             </article>
 
             <!-- MAMA -->
@@ -148,14 +181,29 @@
             <article class="voting-card">
               <span class="voting-number">02</span>
 
-              <div>
+              <div class="voting-content">
                 <h3>MAMA</h3>
                 <p>MAMA AWARDS</p>
-              </div>
 
-              <span class="voting-status">
-                待公告
-              </span>
+                <div class="voting-links">
+                  <a
+                    href="https://mnetplus.world/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    開啟 Mnet Plus ↗
+                  </a>
+
+                  <label class="voting-check">
+                    <input
+                      type="checkbox"
+                      class="voting-checkbox"
+                      data-vote-id="mama"
+                    >
+                    投票完成
+                  </label>
+                </div>
+              </div>
             </article>
 
             <!-- MMA -->
@@ -163,14 +211,29 @@
             <article class="voting-card">
               <span class="voting-number">03</span>
 
-              <div>
+              <div class="voting-content">
                 <h3>MMA</h3>
                 <p>MELON MUSIC AWARDS</p>
-              </div>
 
-              <span class="voting-status">
-                待公告
-              </span>
+                <div class="voting-links">
+                  <a
+                    href="https://m.melon.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    開啟 Melon ↗
+                  </a>
+
+                  <label class="voting-check">
+                    <input
+                      type="checkbox"
+                      class="voting-checkbox"
+                      data-vote-id="mma"
+                    >
+                    投票完成
+                  </label>
+                </div>
+              </div>
             </article>
 
           </div>
@@ -403,6 +466,182 @@
 
   </div>
 
+  <!-- ORIGINAL APP LOGIC -->
   <script src="app.js" defer></script>
+
+  <!-- VOTING TASK LOGIC -->
+  <script>
+    (() => {
+      const KEY = "plli-voting-checks-v1";
+      const VOTE_IDS = [
+        "inkigayo-pre",
+        "inkigayo-live",
+        "mama",
+        "mma"
+      ];
+
+      const kstDate = () =>
+        new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Seoul",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).format(new Date());
+
+      function loadChecks() {
+        try {
+          const stored = JSON.parse(
+            localStorage.getItem(KEY) || "{}"
+          );
+
+          return stored.date === kstDate()
+            ? (stored.checks || {})
+            : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveChecks(checks) {
+        localStorage.setItem(
+          KEY,
+          JSON.stringify({
+            date: kstDate(),
+            checks
+          })
+        );
+      }
+
+      function getProgress() {
+        const checks = loadChecks();
+
+        const completed = VOTE_IDS.filter(
+          id => checks[id]
+        ).length;
+
+        return {
+          completed,
+          total: VOTE_IDS.length
+        };
+      }
+
+      function updateProgress() {
+        const originalCount =
+          document.getElementById("progressCount");
+
+        const originalBar =
+          document.getElementById("progressBar");
+
+        if (!originalCount || !originalBar) return;
+
+        const vote = getProgress();
+
+        /*
+          The existing app.js owns the original daily
+          mission progress. Keep its value separately
+          to avoid double-counting voting tasks.
+        */
+
+        const taskCards = document.querySelectorAll(
+          "#taskList input[type='checkbox']"
+        );
+
+        if (taskCards.length === 0) return;
+
+        const taskCompleted = [...taskCards].filter(
+          checkbox => checkbox.checked
+        ).length;
+
+        const taskTotal = taskCards.length;
+
+        const completed =
+          taskCompleted + vote.completed;
+
+        const total =
+          taskTotal + vote.total;
+
+        originalCount.textContent =
+          `${completed} / ${total}`;
+
+        originalBar.style.width =
+          `${total ? completed / total * 100 : 0}%`;
+      }
+
+      function initialize() {
+        const checks = loadChecks();
+
+        document.querySelectorAll(
+          ".voting-checkbox"
+        ).forEach(checkbox => {
+          const id = checkbox.dataset.voteId;
+
+          checkbox.checked = Boolean(checks[id]);
+
+          checkbox.addEventListener("change", () => {
+            const updated = loadChecks();
+
+            updated[id] = checkbox.checked;
+
+            saveChecks(updated);
+            updateProgress();
+          });
+        });
+
+        updateProgress();
+
+        /*
+          The existing app.js may rerender the
+          task list. Recalculate after changes.
+        */
+        const taskList =
+          document.getElementById("taskList");
+
+        if (taskList) {
+          const observer = new MutationObserver(() => {
+            updateProgress();
+          });
+
+          observer.observe(taskList, {
+            childList: true,
+            subtree: true
+          });
+        }
+
+        document.addEventListener(
+          "change",
+          event => {
+            if (
+              event.target.closest("#taskList")
+            ) {
+              setTimeout(updateProgress, 0);
+            }
+          }
+        );
+
+        setInterval(() => {
+          const current = loadChecks();
+
+          document.querySelectorAll(
+            ".voting-checkbox"
+          ).forEach(checkbox => {
+            checkbox.checked = Boolean(
+              current[checkbox.dataset.voteId]
+            );
+          });
+
+          updateProgress();
+        }, 60000);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener(
+          "DOMContentLoaded",
+          initialize
+        );
+      } else {
+        initialize();
+      }
+    })();
+  </script>
 </body>
 </html>
