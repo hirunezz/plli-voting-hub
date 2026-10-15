@@ -1,1 +1,345 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#241735"><meta name="description" content="PLLI Voting Hub：PLAVE 回歸打榜每日任務與票券管理"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><title>PLLI Voting Hub 💜</title><link rel="stylesheet" href="style.css"></head><body><div id="app"><header><div class="brand"><div class="logo">✦</div><div><small>HYPERDRIVE EDITION</small><h1>PLLI Voting Hub <span>💜</span></h1></div></div><div class="header-right"><span id="clock"></span><button id="install" hidden>安裝到主畫面</button></div></header><main><section class="hero"><div><div class="eyebrow">PLAVE · PLLI TOGETHER</div><h2>今天也一起為 PLAVE 加油！</h2><p>投票、累積票券、X 認證與音樂節目任務，集中在同一個地方。</p><div class="notice">⚠️ 目前為可操作的示範版。示範任務不代表今日官方投票已開放；請以官方公告為準。</div></div><div class="progress-card"><div class="progress-number" id="progressCount">0 / 0</div><span>今日任務完成</span><div class="progress-bar"><div id="progressBar"></div></div></div></section><nav class="tabs" aria-label="主要頁面"><button data-tab="today" class="active">☑ 今日任務</button><button data-tab="tickets">🎟 票券</button><button data-tab="shows">🏆 音放</button><button data-tab="guide">📖 教學</button><button data-tab="admin">⚙ 管理</button></nav><section id="today" class="panel"><div class="section-heading"><div><h2>每日任務</h2><p>完成後手動勾選；每日任務依韓國時間重置。</p></div><select id="filter" aria-label="篩選任務"><option value="all">全部任務</option><option value="collect">累積票券</option><option value="vote">投票</option><option value="social">X 認證</option><option value="stream">音源 / MV</option></select></div><div id="taskList" class="task-grid"></div></section><section id="tickets" class="panel" hidden><div class="section-heading"><div><h2>我的票券</h2><p>票券餘額只儲存在目前裝置，不會傳送到其他 PLLI。</p></div></div><div id="ticketList" class="task-grid"></div></section><section id="shows" class="panel" hidden><h2>音樂節目攻略</h2><p class="muted">以下為平台索引示範，2026 當期計分比例、開放狀態及投票管道需依節目公告查核。</p><div id="showList" class="task-grid"></div></section><section id="guide" class="panel" hidden><h2>安裝與使用教學</h2><div class="card"><h3>iPhone</h3><p>以 Safari 開啟網站 → 分享 → 加入主畫面。安裝後可從桌面直接進入。</p><h3>Android</h3><p>以 Chrome 開啟網站 → 選單 → 安裝應用程式／加入主畫面。</p><h3>投票 APP 快速開啟</h3><p>任務中的「開啟平台」會導向官方網站；正式版可在確認 APP 支援後加入 iOS／Android 深層連結。開啟平台不代表投票完成。</p><h3>進度儲存</h3><p>此版本使用瀏覽器本機儲存，清除網站資料或更換裝置可能遺失紀錄。後續接入 Supabase 才能提供全站同步的任務發布與帳號同步。</p></div></section><section id="admin" class="panel" hidden><h2>管理員 · 本機編輯示範</h2><p class="notice">此版管理功能僅修改目前瀏覽器內的資料，尚未連線雲端。不能將本機修改同步給其他 PLLI，也不具備真正的管理員身分驗證。</p><form id="taskForm" class="card form"><label>任務名稱<input id="title" required maxlength="100" placeholder="例如：每日累積 Heart Beats"></label><label>平台名稱<input id="platform" required maxlength="60" placeholder="例如：Mubeat"></label><label>類型<select id="type"><option value="collect">累積票券</option><option value="vote">投票</option><option value="social">X 認證</option><option value="stream">音源 / MV</option></select></label><label>官方平台網址（https://）<input id="url" type="url" required placeholder="https://example.com"></label><label>任務說明<textarea id="description" rows="3" maxlength="400"></textarea></label><label>X 認證<select id="xauth"><option value="none">不需要</option><option value="post">需 X 發文</option><option value="repost">需轉推</option><option value="screenshot">需截圖</option><option value="unknown">待確認</option></select></label><label>重置週期<select id="reset"><option value="daily">每日（KST）</option><option value="once">活動期間一次</option></select></label><label>狀態<select id="status"><option value="draft">草稿（不顯示於任務列表）</option><option value="active">啟用（本機示範）</option></select></label><button class="primary" type="submit">新增本機任務</button></form><h3>已建立的本機任務</h3><div id="adminList"></div><button id="restore" class="outline">恢復示範資料</button></section></main><footer>Made for PLLI 💜 · 非 PLAVE / VLAST 官方網站 · 任務資訊請以官方公告為準</footer></div><script src="app.js" defer></script></body></html>
+
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#0d0d0f">
+
+  <meta
+    name="description"
+    content="PLAVE HYPERDRIVE Comeback Guide for PLLI：每日投票任務、票券管理與音樂節目攻略。"
+  >
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+
+  <title>PLAVE HYPERDRIVE Comeback Guide for PLLI</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- HEADER -->
+
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">⚑</div>
+
+        <div>
+          <h1>PLAVE HYPERDRIVE Comeback Guide for PLLI</h1>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <span id="clock"></span>
+
+        <button id="install" hidden>
+          安裝到主畫面
+        </button>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- HERO / RACE DASHBOARD -->
+
+      <section class="hero">
+
+        <div>
+          <h2>今天也一起為 PLAVE 加油！</h2>
+
+          <p>
+            投票、累積票券與音樂節目任務，
+            集中在同一個地方。
+          </p>
+
+          <div class="notice">
+            目前為可操作的示範版。
+            示範任務不代表今日官方投票已開放；
+            請以官方公告為準。
+          </div>
+        </div>
+
+        <div class="progress-card">
+          <div
+            class="progress-number"
+            id="progressCount"
+          >
+            0 / 0
+          </div>
+
+          <span>今日任務完成</span>
+
+          <div class="progress-bar">
+            <div id="progressBar"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- NAVIGATION -->
+
+      <nav class="tabs" aria-label="主要頁面">
+
+        <button data-tab="today" class="active">
+          今日任務
+        </button>
+
+        <button data-tab="tickets">
+          票券
+        </button>
+
+        <button data-tab="shows">
+          音放
+        </button>
+
+        <button data-tab="guide">
+          教學
+        </button>
+
+        <button data-tab="admin">
+          管理
+        </button>
+
+      </nav>
+
+      <!-- TODAY'S MISSIONS -->
+
+      <section id="today" class="panel">
+
+        <div class="section-heading">
+          <div>
+            <h2>每日任務</h2>
+
+            <p>
+              完成後手動勾選；
+              每日任務依韓國時間重置。
+            </p>
+          </div>
+
+          <select id="filter" aria-label="篩選任務">
+            <option value="all">全部任務</option>
+            <option value="collect">累積票券</option>
+            <option value="vote">投票</option>
+            <option value="social">X 認證</option>
+            <option value="stream">音源 / MV</option>
+          </select>
+        </div>
+
+        <div id="taskList" class="task-grid"></div>
+
+      </section>
+
+      <!-- TICKETS -->
+
+      <section id="tickets" class="panel" hidden>
+
+        <div class="section-heading">
+          <div>
+            <h2>我的票券</h2>
+
+            <p>
+              票券餘額只儲存在目前裝置，
+              不會傳送到其他 PLLI。
+            </p>
+          </div>
+        </div>
+
+        <div id="ticketList" class="task-grid"></div>
+
+      </section>
+
+      <!-- MUSIC SHOWS -->
+
+      <section id="shows" class="panel" hidden>
+
+        <h2>音樂節目攻略</h2>
+
+        <p class="muted">
+          以下為平台索引示範。
+          2026 當期計分比例、開放狀態及投票管道，
+          需依節目公告查核。
+        </p>
+
+        <div id="showList" class="task-grid"></div>
+
+      </section>
+
+      <!-- GUIDE -->
+
+      <section id="guide" class="panel" hidden>
+
+        <h2>安裝與使用教學</h2>
+
+        <div class="card">
+
+          <h3>iPhone</h3>
+
+          <p>
+            以 Safari 開啟網站 →
+            分享 → 加入主畫面。
+            安裝後可從桌面直接進入。
+          </p>
+
+          <h3>Android</h3>
+
+          <p>
+            以 Chrome 開啟網站 →
+            選單 → 安裝應用程式／加入主畫面。
+          </p>
+
+          <h3>投票 APP 快速開啟</h3>
+
+          <p>
+            任務中的「開啟平台」會使用各平台設定的連結。
+            部分連結可直接開啟已安裝的 APP，
+            其他連結可能開啟網站或 App Store。
+            開啟平台不代表投票完成。
+          </p>
+
+          <h3>進度儲存</h3>
+
+          <p>
+            此版本使用瀏覽器本機儲存。
+            清除網站資料或更換裝置，
+            可能遺失紀錄。
+            目前尚未提供跨裝置同步。
+          </p>
+
+        </div>
+
+      </section>
+
+      <!-- LOCAL ADMIN -->
+
+      <section id="admin" class="panel" hidden>
+
+        <h2>管理員 · 本機編輯示範</h2>
+
+        <p class="notice">
+          此版管理功能僅修改目前瀏覽器內的資料，
+          尚未連線雲端。
+          不能將本機修改同步給其他 PLLI，
+          也不具備真正的管理員身分驗證。
+        </p>
+
+        <form id="taskForm" class="card form">
+
+          <label>
+            任務名稱
+            <input
+              id="title"
+              required
+              maxlength="100"
+              placeholder="例如：每日累積 Heart Beats"
+            >
+          </label>
+
+          <label>
+            平台名稱
+            <input
+              id="platform"
+              required
+              maxlength="60"
+              placeholder="例如：Mubeat"
+            >
+          </label>
+
+          <label>
+            類型
+            <select id="type">
+              <option value="collect">累積票券</option>
+              <option value="vote">投票</option>
+              <option value="social">X 認證</option>
+              <option value="stream">音源 / MV</option>
+            </select>
+          </label>
+
+          <label>
+            官方平台網址（https://）
+            <input
+              id="url"
+              type="url"
+              required
+              placeholder="https://example.com"
+            >
+          </label>
+
+          <label>
+            任務說明
+            <textarea
+              id="description"
+              rows="3"
+              maxlength="400"
+            ></textarea>
+          </label>
+
+          <label>
+            X 認證
+            <select id="xauth">
+              <option value="none">不需要</option>
+              <option value="post">需 X 發文</option>
+              <option value="repost">需轉推</option>
+              <option value="screenshot">需截圖</option>
+              <option value="unknown">待確認</option>
+            </select>
+          </label>
+
+          <label>
+            重置週期
+            <select id="reset">
+              <option value="daily">每日（KST）</option>
+              <option value="once">活動期間一次</option>
+            </select>
+          </label>
+
+          <label>
+            狀態
+            <select id="status">
+              <option value="draft">
+                草稿（不顯示於任務列表）
+              </option>
+              <option value="active">
+                啟用（本機示範）
+              </option>
+            </select>
+          </label>
+
+          <button class="primary" type="submit">
+            新增本機任務
+          </button>
+
+        </form>
+
+        <h3>已建立的本機任務</h3>
+
+        <div id="adminList"></div>
+
+        <button id="restore" class="outline">
+          恢復示範資料
+        </button>
+
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+      Made for PLLI · 非 PLAVE / VLAST 官方網站 ·
+      任務資訊請以官方公告為準
+    </footer>
+
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
